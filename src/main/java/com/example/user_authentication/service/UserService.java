@@ -2,16 +2,18 @@ package com.example.user_authentication.service;
 
 
 
-import com.example.user_authentication.dto.UserDto;
+import com.example.user_authentication.dto.RegisterRequest;
+import com.example.user_authentication.dto.UserResponse;
 import com.example.user_authentication.entity.User;
 
 import java.util.List;
 
 public interface UserService {
-    void saveUser(UserDto userDto);
-    UserDto getUser(Long id);
+    void saveUser(RegisterRequest userDto);
+
+    void saveAdmin(RegisterRequest userDto);
+    UserResponse getUser(Long id);
 
     User findByEmail(String email);
-
-    List<UserDto> findAllUsers();
+    List<UserResponse> findAllUsers();
 }

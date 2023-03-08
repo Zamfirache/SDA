@@ -12,7 +12,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserDto
+public class RegisterRequest
 {
     @NotEmpty
     private String firstName;
