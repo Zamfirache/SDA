@@ -1,6 +1,7 @@
 package com.example.user_authentication.service.impl;
 
-import com.example.user_authentication.dto.UserDto;
+import com.example.user_authentication.dto.RegisterRequest;
+import com.example.user_authentication.dto.UserResponse;
 import com.example.user_authentication.entity.Role;
 import com.example.user_authentication.entity.User;
 import com.example.user_authentication.exception.user.UserNotFoundException;
@@ -16,7 +17,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static com.example.user_authentication.utils.Convertor.convertEntityToDto;
+import static com.example.user_authentication.utils.Convertor.convertEntityToResponse;
 
 @Service
 @Transactional(readOnly = true)
@@ -35,8 +36,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    @Transactional()
-    public void saveUser(UserDto userDto) {
+    @Transactional
+    public void saveUser(RegisterRequest userDto) {
         User user = new User();
         user.setName(userDto.getFirstName() + " " + userDto.getLastName());
         user.setEmail(userDto.getEmail());
@@ -44,9 +45,28 @@ public class UserServiceImpl implements UserService {
         //encrypt the password once we integrate spring security
         //user.setPassword(userDto.getPassword());
         user.setPassword(passwordEncoder.encode(userDto.getPassword()));
+        Role role = roleRepository.findByName("ROLE_USER");
+        if(role == null){
+            role = checkUserRoleExist();
+        }
+        user.setRoles(Arrays.asList(role));
+        userRepository.save(user);
+    }
+
+    @Override
+    @Transactional
+    public void saveAdmin(RegisterRequest registerRequest) {
+
+        User user = new User();
+        user.setName(registerRequest.getFirstName() + " " + registerRequest.getLastName());
+        user.setEmail(registerRequest.getEmail());
+
+        //encrypt the password once we integrate spring security
+        //user.setPassword(userDto.getPassword());
+        user.setPassword(passwordEncoder.encode(registerRequest.getPassword()));
         Role role = roleRepository.findByName("ROLE_ADMIN");
         if(role == null){
-            role = checkRoleExist();
+            role = checkAdminRoleExist();
         }
         user.setRoles(Arrays.asList(role));
         userRepository.save(user);
@@ -54,12 +74,12 @@ public class UserServiceImpl implements UserService {
 
 
     @Override
-    public UserDto getUser(Long id) {
+    public UserResponse getUser(Long id) {
         Optional<User> userOptional = userRepository.findById(id);
         if(userOptional.isPresent())
         {
             User user = userOptional.get();
-            return convertEntityToDto(user);
+            return convertEntityToResponse(user);
         }
         else
         {
@@ -73,21 +93,28 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<UserDto> findAllUsers() {
+    public List<UserResponse> findAllUsers() {
         List<User> users = userRepository.findAll();
         if(users.isEmpty())
         {
             throw new UserNotFoundException("No users were found in the database");
         }
-        return users.stream().map((user) -> convertEntityToDto(user))
+        return users.stream().map((user) -> convertEntityToResponse(user))
                 .collect(Collectors.toList());
     }
 
     @Transactional
-    public Role checkRoleExist() { // in mod normal aceasta metoda trebuie sa verifice un rol deja existent in baza de date! Eu il adaug pentru simplitate, chiar daca nu exista!
+    public Role checkAdminRoleExist() {
 
         Role role = new Role();
         role.setName("ROLE_ADMIN");
+        return roleRepository.save(role);
+    }
+    @Transactional
+    public Role checkUserRoleExist() {
+
+        Role role = new Role();
+        role.setName("ROLE_USER");
         return roleRepository.save(role);
     }
 }

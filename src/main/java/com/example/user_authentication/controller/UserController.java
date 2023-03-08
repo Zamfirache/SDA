@@ -2,7 +2,8 @@ package com.example.user_authentication.controller;
 
 import com.example.user_authentication.dto.LoginRequest;
 import com.example.user_authentication.dto.LoginResponse;
-import com.example.user_authentication.dto.UserDto;
+import com.example.user_authentication.dto.RegisterRequest;
+import com.example.user_authentication.dto.UserResponse;
 import com.example.user_authentication.entity.User;
 import com.example.user_authentication.exception.user.UserAlreadyTakenException;
 import com.example.user_authentication.security.UserDetailsImpl;
@@ -31,30 +32,42 @@ public class UserController {
     }
 
     @RequestMapping("")
-    public ResponseEntity<List<UserDto>> findAllUsers()
+    public ResponseEntity<List<UserResponse>> findAllUsers()
     {
-        List<UserDto> users = userService.findAllUsers();
+        List<UserResponse> users = userService.findAllUsers();
 
         return ResponseEntity.ok(users);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<UserDto>findUser(@PathVariable Long id)
+    public ResponseEntity<UserResponse>findUser(@PathVariable Long id)
     {
-        UserDto user = userService.getUser(id);
+        UserResponse user = userService.getUser(id);
         return ResponseEntity.ok().body(user);
     }
 
 
     @PostMapping("/register")
-    public ResponseEntity<Void> register(@RequestBody UserDto userDto)
+    public ResponseEntity<Void> registerUser(@RequestBody RegisterRequest registerRequest)
     {
-        User existing = userService.findByEmail(userDto.getEmail());
+        User existing = userService.findByEmail(registerRequest.getEmail());
         if (existing != null)
         {
             throw new UserAlreadyTakenException("Email is already in use");
         }
-        userService.saveUser(userDto);
+        userService.saveUser(registerRequest);
+        return ResponseEntity.status(HttpStatus.ACCEPTED).build();
+    }
+
+    @PostMapping("/admin/register")
+    public ResponseEntity<Void> registerAdmin(@RequestBody RegisterRequest registerRequest)
+    {
+        User existing = userService.findByEmail(registerRequest.getEmail());
+        if (existing != null)
+        {
+            throw new UserAlreadyTakenException("Email is already in use");
+        }
+        userService.saveAdmin(registerRequest);
         return ResponseEntity.status(HttpStatus.ACCEPTED).build();
     }
     @PostMapping("/signin")

@@ -1,6 +1,5 @@
 package com.example.user_authentication.security;
 
-
 import com.example.user_authentication.entity.Role;
 import com.example.user_authentication.entity.User;
 import org.springframework.security.core.GrantedAuthority;
