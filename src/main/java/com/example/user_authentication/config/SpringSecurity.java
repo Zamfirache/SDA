@@ -3,6 +3,7 @@ package com.example.user_authentication.config;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
@@ -38,7 +39,13 @@ public class SpringSecurity {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.csrf().disable();
-        // putem sa ne configuram propriile filtre ( adica cine este autorizat sa faca anumite requesturi!)
+        http
+                .authorizeHttpRequests((auth) -> auth
+                        .requestMatchers("/auth-api/**").permitAll()
+                        .requestMatchers(HttpMethod.DELETE,"/user-api/**").hasRole("ADMIN")
+                        .anyRequest().authenticated()
+                )
+                .httpBasic();
         return http.build();
     }
 

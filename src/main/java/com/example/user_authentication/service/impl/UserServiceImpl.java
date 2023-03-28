@@ -103,6 +103,22 @@ public class UserServiceImpl implements UserService {
                 .collect(Collectors.toList());
     }
 
+    @Override
+    @Transactional
+    public void deleteUser(Long id) {
+        Optional<User> userOptional = userRepository.findById(id);
+        if(userOptional.isPresent())
+        {
+            User user = userOptional.get();
+            user.deleteRoles();
+            userRepository.delete(user);
+        }
+        else
+        {
+            throw new UserNotFoundException("No user with id "+id+" was found in database");
+        }
+    }
+
     @Transactional
     public Role checkAdminRoleExist() {
 

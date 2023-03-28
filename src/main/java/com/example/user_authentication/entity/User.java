@@ -39,4 +39,9 @@ public class User
             inverseJoinColumns={@JoinColumn(name="ROLE_ID", referencedColumnName="ID")})
     private List<Role> roles = new ArrayList<>();
 
+    public void deleteRoles()
+    {
+        roles.clear();
+    }
+
 }
