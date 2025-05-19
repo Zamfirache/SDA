@@ -5,6 +5,13 @@ import structural.decorator.decorators.MilkDecorator;
 import structural.decorator.decorators.SugarDecorator;
 
 // la ce ma ajuta? => Sa extind functionalitatea dinamic unui obiect deja existent!!!!
+
+
+// unde se intalneste? => AOP Spring ( aspect orientated programming)
+ // ca aplicatii practice ale AOP ( aspecte) => Tranzactionabilitate ( pe asta il invatati la JDBC si Hibernate)
+ //                                            => Caching
+ //                                            => Securitatea
+//                                             =>Logging
 public class Main {
     public static void main(String[] args) {
 
