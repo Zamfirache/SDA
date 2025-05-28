@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
 import static com.example.user_authentication.utils.Convertor.convertEntityToResponse;
 
 @Service
-@Transactional(readOnly = true)
+@Transactional(readOnly = true)  // readOnly e o optimizare pt operatiile de citire ( getUser)
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
@@ -50,7 +50,9 @@ public class UserServiceImpl implements UserService {
             role = checkUserRoleExist();
         }
         user.setRoles(Arrays.asList(role));
-        userRepository.save(user);
+
+        userRepository.save(user);  // aici am un singur insert query de sql!!!
+
     }
 
     @Override

@@ -17,7 +17,7 @@ public class UserController {
         this.userService = userService;
     }
 
-    @RequestMapping("")
+    @GetMapping("")
     public ResponseEntity<List<UserResponse>> findAllUsers()
     {
         List<UserResponse> users = userService.findAllUsers();
